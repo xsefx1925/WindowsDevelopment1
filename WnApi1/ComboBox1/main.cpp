@@ -41,6 +41,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(hCombo, CB_GETLBTEXT, i, (LPARAM)sz_buffer);
 			sprintf(sz_message, "Вы выбрали пункт N%i со значением  \"%s\".", i, sz_buffer);
 			MessageBox(hwnd, sz_message, "Selected value", MB_OK | MB_ICONINFORMATION);
+		
 			break;
 		}
 		case IDCANCEL: EndDialog(hwnd, 0); break;
