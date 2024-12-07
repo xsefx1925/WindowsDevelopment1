@@ -7,7 +7,7 @@
 #define IDC_STATIC 1000
 #define IDC_EDIT 1001
 #define IDC_BUTTON 1002
-
+//
 CONST CHAR g_sz_WINDOW_CLASS[] = "My Main Window";
 
 
