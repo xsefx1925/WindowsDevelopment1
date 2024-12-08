@@ -234,6 +234,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_COMMAND:
 	{
+		SetFocus(hwnd);//для того чтобы всегда работала клавиатура
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_display[MAX_PATH]{};
@@ -260,6 +261,40 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (strchr(sz_display, '.'))break;
 			strcat(sz_display, ".");
 			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
+		}
+		if (LOWORD(wParam) == IDC_BUTTON_BSP)
+		{
+			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
+			if (strlen(sz_display) > 1)	
+				sz_display[strlen(sz_display) - 1] = 0;
+			else
+				sz_display[0] = '0';
+			SendMessage(hEditDisplay, WM_GETTEXT, 0, (LPARAM)sz_display);
+		}
+		if (LOWORD(wParam) == IDC_BUTTON_CLR)
+		{
+			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");
+		}
+	
+	}
+	break;
+case WM_KEYDOWN:
+	{
+		if (wParam >= '0' && wParam <= '9')
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - '0' + IDC_BUTTON_0), 0);
+
+		}
+		if (wParam >= 0 * 60 && wParam <= 0 * 69)
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0*60 + IDC_BUTTON_0), 0);
+		}
+		switch (wParam)
+		{
+		case VK_OEM_PERIOD: 
+		case VK_DECIMAL: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); break;
+		case VK_BACK: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); break;
+		case VK_ESCAPE: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0); break;
 		}
 	}
 	break;
