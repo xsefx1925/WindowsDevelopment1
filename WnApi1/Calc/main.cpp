@@ -1,8 +1,11 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include<Windows.h>
-#include<string.h>
+#include<cstdio>
+//#include<string.h>
+#include<float.h>
 #include"resource.h"
 #include"Dimensions.h"
+
 
 //
 /*
@@ -31,8 +34,8 @@
 
 
 
-CONST INT g_i_BUTTON_SIZE = 50; //ðàçìåð êíîïêè â ïèêñåëÿõ
-CONST INT g_i_INTERVAL = 5; //ðàññòîÿíèå ìåæäó êíîïêàìè
+CONST INT g_i_BUTTON_SIZE = 50; //Ã°Ã Ã§Ã¬Ã¥Ã° ÃªÃ­Ã®Ã¯ÃªÃ¨ Ã¢ Ã¯Ã¨ÃªÃ±Ã¥Ã«Ã¿Ãµ
+CONST INT g_i_INTERVAL = 5; //Ã°Ã Ã±Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã¬Ã¥Ã¦Ã¤Ã³ ÃªÃ­Ã®Ã¯ÃªÃ Ã¬Ã¨
 CONST INT g_i_BUTTON_DOUBLE_SIZE = g_i_BUTTON_SIZE * 2 + g_i_INTERVAL;
 
 CONST INT g_i_SCREEN_WIDTH = g_i_BUTTON_SIZE *5 + g_i_INTERVAL * 4;
@@ -62,7 +65,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 {
 	float a = -34.01;
 	float b = 8.3;
-	//1) Ðåãèñòðàöèÿ êëàññà îêíà:
+	//1) ÃÃ¥Ã£Ã¨Ã±Ã²Ã°Ã Ã¶Ã¨Ã¿ ÃªÃ«Ã Ã±Ã±Ã  Ã®ÃªÃ­Ã :
 	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
 
@@ -86,7 +89,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		MessageBox(NULL, "Class regisration failed", NULL, MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	//2) Ñîçäàíèå îêíà:
+	//2) Ã‘Ã®Ã§Ã¤Ã Ã­Ã¨Ã¥ Ã®ÃªÃ­Ã :
 	HWND hwnd = CreateWindowEx
 	(
 		NULL,
@@ -103,7 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
-	//3) Çàïóñê öèêëà ñîîáùåíèé
+	//3) Ã‡Ã Ã¯Ã³Ã±Ãª Ã¶Ã¨ÃªÃ«Ã  Ã±Ã®Ã®Ã¡Ã¹Ã¥Ã­Ã¨Ã©
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 	{
@@ -189,7 +192,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (3 - i),
 				g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 				hwnd,
-				(HMENU)IDC_BUTTON_PLUS + i,
+				(HMENU)(IDC_BUTTON_PLUS + i),
 				GetModuleHandle(NULL),
 				NULL
 			);
@@ -234,7 +237,12 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_COMMAND:
 	{
-		SetFocus(hwnd);//äëÿ òîãî ÷òîáû âñåãäà ðàáîòàëà êëàâèàòóðà
+		static DOUBLE  a = DBL_MIN;
+		static DOUBLE  b = DBL_MIN;
+		static WORD operation = 0;
+		static BOOL input = FALSE;
+		static BOOL operation_input = FALSE;
+		SetFocus(hwnd);//Ã¤Ã«Ã¿ Ã²Ã®Ã£Ã® Ã·Ã²Ã®Ã¡Ã» Ã¢Ã±Ã¥Ã£Ã¤Ã  Ã°Ã Ã¡Ã®Ã²Ã Ã«Ã  ÃªÃ«Ã Ã¢Ã¨Ã Ã²Ã³Ã°Ã 
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_display[MAX_PATH]{};
@@ -265,7 +273,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (LOWORD(wParam) == IDC_BUTTON_BSP)
 		{
 			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
-			if (strlen(sz_display) > 1)	
+			if (strlen(sz_display) > 1)
 				sz_display[strlen(sz_display) - 1] = 0;
 			else
 				sz_display[0] = '0';
@@ -273,12 +281,40 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_CLR)
 		{
+			a = b = DBL_MIN;
+			operation = 0;
+			input = operation_input = FALSE;
 			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");
 		}
-	
+		/////////////////////////////////////////////////////////////////////////
+		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
+		{
+			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
+			if (input  && a  == DBL_MIN)a = atof(sz_display);
+			//input = FALSE;
+			if (operation)SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			operation = LOWORD(wParam);
+			operation_input = TRUE;
+		}
+		if (LOWORD(wParam) == IDC_BUTTON_EQUAL)
+		{
+			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
+			if (input)b = atof(sz_display);
+			input = FALSE;
+			switch (operation)
+			{
+			case IDC_BUTTON_PLUS: a += b; break;
+			case IDC_BUTTON_MINUS: a -= b; break;
+			case IDC_BUTTON_ASTER: a *= b; break;
+			case IDC_BUTTON_SLASH: a /= b; break;
+			}
+			operation_input = FALSE;
+			sprintf(sz_display, "%g", a);
+			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
+		}
 	}
 	break;
-case WM_KEYDOWN:
+	case WM_KEYDOWN:
 	{
 		if (wParam >= '0' && wParam <= '9')
 		{
@@ -287,11 +323,11 @@ case WM_KEYDOWN:
 		}
 		if (wParam >= 0 * 60 && wParam <= 0 * 69)
 		{
-			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0*60 + IDC_BUTTON_0), 0);
+			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0 * 60 + IDC_BUTTON_0), 0);
 		}
 		switch (wParam)
 		{
-		case VK_OEM_PERIOD: 
+		case VK_OEM_PERIOD:
 		case VK_DECIMAL: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); break;
 		case VK_BACK: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); break;
 		case VK_ESCAPE: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0); break;
