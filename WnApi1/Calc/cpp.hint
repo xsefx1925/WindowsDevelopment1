@@ -4,3 +4,4 @@
 #define FALSE
 #define IDC_BUTTON_SLASH
 #define LOWORD(l) ((WORD)(((DWORD_PTR)(l)) & 0xffff))
+#define WM_DESTROY
