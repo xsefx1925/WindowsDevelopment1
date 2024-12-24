@@ -3,9 +3,11 @@
 #include<cstdio>
 #include<float.h>
 #include"resource.h"
-#include"Dimensions.h"
+#include"Dimensions.h"	//размеры кнопок, и других элементов.....
 #include"Skins.h"
 
+//#define - определить
+//показывает что заменить, чем заменить
 
 //
 /*
@@ -54,8 +56,12 @@ CONST INT g_i_WINDOW_WIDTH = g_i_SCREEN_WIDTH + g_i_START_X * 2;
 CONST INT g_i_WINDOW_HEIGHT = g_i_START_X + g_i_SCREEN_HEIGHT + g_i_BUTTON_SIZE * 4 + g_i_INTERVAL * 5;
 */
 
-CONST CHAR g_sz_WINDOW_CLASS[] = "Calc_WPD_311";
-CONST CHAR* g_OPERATIONS[] = { "+","-", "*",  "/" };
+CONST CHAR g_sz_WINDOW_CLASS[] = "Calc_WPD_311";//класс окна
+CONST CHAR* g_OPERATIONS[] = { "+","-", "*",  "/" }; //для того чтобы быстрее добавлять кнопки операций
+
+//'+';-символьная константа
+//"+";строковая константа
+//строка это массив, а массив это указатель поскольку имя массива содержит адрес нулевого элемента массива
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT GetTitleBarHeight(HWND hwnd);
@@ -64,6 +70,14 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
+	//hInstance - экзмпляр исполняемого файла программы загруженной в память
+	//hPrevInst - не используется
+	//lpCmdLine - коммандная строка с которой запустилась программа
+	//nCmdShow - режим отображения окна (свернуто на панель задач, развернуто на весь экран, свернуто в окно)
+
+	//HINSTANCE - тип данных
+	//hInstance - имя переменной
+
 	float a = -34.01;
 	float b = 8.3;
 	//1) регистрация класса окна:
@@ -119,10 +133,22 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static INT index = 0;
-	switch (uMsg)
+	//процедура окна это самая обычная функция, которая неявно вызывается при запуске окна. 
+	//процедура окна всегда принимает 4 параметра: 
+	//hwnd - окно; 
+	//uMsg	 - сообщение;
+	//wParam, lParam - параметры сообщения, зависят от сообщения. Максимум в функцию можно передать 4 параметра сообщения, 
+	//поскольку wParam и lParam делятся на LOWORD(младшее слово) и HIWORD(старшее слово)
+
+	static INT index = 0; // выбирает скин и цветовую схему из массивов: 
+	//g_SKIN[];
+	//g_WINDOW_BACKGROUND_COLOR[] ;
+	//g_DISPLAY_BACKGROUND_COLOR[};
+	//g_DISPLAY_FOREGROUND_COLOR[];
+	switch (uMsg)// это основной switch процедуры окна, он выбирает различные действия в зависимости от сообщения, когда пользователь нажимает на кнопки,
+		//обрабатывается сообщение WM_COMMAND  
 	{
-	case WM_CREATE:
+	case WM_CREATE:	//в этой секции создаются элементы окна
 	{
 		HWND hEdit = CreateWindowEx
 		(
@@ -275,7 +301,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SetSkin(hwnd, "square_blue");
 	}
 	break;
-	case WM_CTLCOLOREDIT:
+	case WM_CTLCOLOREDIT:	// эта секция обычно задает цвет фона и текста в текстовом поле, но у нас она также задает цвет главного окна
 	{
 		HDC hdcEdit = (HDC)wParam;
 	//	SetBkMode(hdcEdit, OPAQUE);
@@ -284,17 +310,17 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		HBRUSH hbrBackground = CreateSolidBrush(g_WINDOW_BACKGROUND_COLOR[index]);
 
-		SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackground );
+		SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackground );	//задаем цвет главного окна
 		SendMessage(hwnd, WM_ERASEBKGND, wParam, 0);
 		//InvalidateRect(hwnd, NULL, TRUE);
 		//UpdateWindow(hwnd);
 		//SetSkin(hwnd, g_SKIN[index]);
 		
-		RedrawWindow(hwnd, NULL, NULL, RDW_ERASE );
+		RedrawWindow(hwnd, NULL, NULL, RDW_ERASE );//перерисовать окно
 		return (LRESULT)hbrBackground;
 	}
 		break;
-	case WM_COMMAND:
+	case WM_COMMAND:// это сообщение приходит когда пользователь нажимает ЛКМ  на элементы окна
 	{
 		static DOUBLE  a = DBL_MIN;
 		static DOUBLE  b = DBL_MIN;
@@ -378,7 +404,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 
-	case WM_KEYDOWN:
+	case WM_KEYDOWN://это сообщение приходит когда пользователь нажимает клавишу
 	{
 		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
 		{
@@ -437,7 +463,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 
-	case WM_KEYUP:
+	case WM_KEYUP:	//это сообщение приходит когда юзер отжимает клавишу
 	{
 		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
 		{
@@ -503,7 +529,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	break;
-	case WM_CONTEXTMENU:
+	case WM_CONTEXTMENU://это сообщение приходит когда юзер нажимает ПКМ на окно
 	{
 		//1)создаем всплывающее меню
 		HMENU hMenu = CreatePopupMenu();
@@ -522,7 +548,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			index = item - IDR_SQUARE_BLUE;
 			//SendMessage(GetDlgItem(hwnd, item), )
 		//	ModifyMenu(hMenu, item - IDR_SQUARE_BLUE, MF_BYPOSITION | MF_STRING | MF_CHECKED, item, NULL);
-			
+			break;
 		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
 		}
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
@@ -538,10 +564,10 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	}
 	break;
-	case WM_DESTROY:
+	case WM_DESTROY:// это сообщение уничтожает окно
 		PostQuitMessage(0);
 		break;
-	case WM_CLOSE:
+	case WM_CLOSE:// это сообщение закрывает окно, здесь просто отправляется сообщение на уничтожение окна
 		DestroyWindow(hwnd);
 		break;
 	default: return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -572,7 +598,7 @@ CONST CHAR* g_BUTTONS[] =
 	"button_7.bmp",
 	"button_8.bmp",
 	"button_9.bmp",
-	"button_point.bmp"
+	"button_point.bmp",
 	"button_plus.bmp",
 	"button_minus.bmp",
 	"button_aster.bmp",
