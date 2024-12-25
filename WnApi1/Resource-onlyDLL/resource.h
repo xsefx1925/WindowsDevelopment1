@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by Resource.rc
 //
+
 #define IDB_BUTTON_0	    1000
 #define IDB_BUTTON_1	    1001
 #define IDB_BUTTON_2	    1002

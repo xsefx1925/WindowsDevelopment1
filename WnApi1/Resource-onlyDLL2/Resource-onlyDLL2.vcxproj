@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a0738a14-5346-4eca-9e6a-412b9141e87d}</ProjectGuid>
-    <RootNamespace>ResourceonlyDLL</RootNamespace>
+    <ProjectGuid>{3155682b-78c7-4d81-95a3-c800c71a99fe}</ProjectGuid>
+    <RootNamespace>ResourceonlyDLL2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -86,7 +86,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;RESOURCEONLYDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;RESOURCEONLYDLL2_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -102,7 +102,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;RESOURCEONLYDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;RESOURCEONLYDLL2_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;RESOURCEONLYDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;RESOURCEONLYDLL2_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;RESOURCEONLYDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;RESOURCEONLYDLL2_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -154,24 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="ButtonsBMP\square_blue\button_0.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_0_raw.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_1.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_2.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_3.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_4.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_5.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_6.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_7.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_8.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_9.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_aster.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_bsp.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_clr.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_equal.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_minus.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_plus.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_point.bmp" />
-    <Image Include="ButtonsBMP\square_blue\button_slash.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

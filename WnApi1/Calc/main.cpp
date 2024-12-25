@@ -66,6 +66,7 @@ CONST CHAR* g_OPERATIONS[] = { "+","-", "*",  "/" }; //для того чтоб�
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT GetTitleBarHeight(HWND hwnd);
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
+VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[]);
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
@@ -626,5 +627,10 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 		);
 		SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton);
 	}
+}
+VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[])
+{
+	HMODULE hModule = LoadLibrary("square_blue.DLL");
 
+	FreeLibrary(hModule);
 }
