@@ -104,7 +104,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DWORD nFonts = 0;
 		DWORD len = SizeofResource(hFontsModule, hFntRes);
 		AddFontMemResourceEx(fntData, len, NULL, &nFonts);
-		*/
+		*//////
 		LoadFontsFromDLL(hFontsModule);
 		HFONT hFont = CreateFont
 		(
