@@ -3,85 +3,27 @@
 #include<cstdio>
 #include<float.h>
 #include"resource.h"
-#include"Dimensions.h"	//размеры кнопок, и других элементов.....
+#include"Dimensions.h"
 #include"Skins.h"
+#include"Fonts.h"
 
-//#define - определить
-//показывает что заменить, чем заменить
+CONST CHAR g_sz_WINDOW_CLASS[] = "Calc_VPD_311";
 
-//
-/*
-#define IDC_EDIT_DISPLAY  999
-#define IDC_BUTTON_0      1000
-#define IDC_BUTTON_1      1001
-#define IDC_BUTTON_2      1002
-#define IDC_BUTTON_3      1003
-#define IDC_BUTTON_4      1004
-#define IDC_BUTTON_5      1005
-#define IDC_BUTTON_6      1006
-#define IDC_BUTTON_7      1007
-#define IDC_BUTTON_8      1008
-#define IDC_BUTTON_9      1009
-#define IDC_BUTTON_POINT  1010
-
-#define IDC_BUTTON_PLUS   1011
-#define IDC_BUTTON_MINUS  1012
-#define IDC_BUTTON_ASTER  1013 //"*"
-#define IDC_BUTTON_SLASH  1014//  /
-
-#define IDC_BUTTON_BSP    1015 //Backspase
-#define IDC_BUTTON_CLR    1016 //clear
-#define IDC_BUTTON_EQUAL  1017 //"="
-
-
-
-
-CONST INT g_i_BUTTON_SIZE = 50; //ðàçìåð êíîïêè â ïèêñåëÿõ
-CONST INT g_i_INTERVAL = 5; //ðàññòîÿíèå ìåæäó êíîïêàìè
-CONST INT g_i_BUTTON_DOUBLE_SIZE = g_i_BUTTON_SIZE * 2 + g_i_INTERVAL;
-
-CONST INT g_i_SCREEN_WIDTH = g_i_BUTTON_SIZE *5 + g_i_INTERVAL * 4;
-CONST INT g_i_SCREEN_HEIGHT = 22;
-
-
-CONST INT g_i_START_X = 10;
-CONST INT g_i_START_Y = 10;
-CONST INT g_i_BUTTON_START_X = g_i_START_X;
-CONST INT g_i_BUTTON_START_Y = g_i_START_Y + g_i_SCREEN_HEIGHT + g_i_INTERVAL;
-
-#define BUTTON_SHIFT_X(column) g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL)*(column)
-#define BUTTON_SHIFT_Y(row)    g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL)*(row)
-
-CONST INT g_i_WINDOW_WIDTH = g_i_SCREEN_WIDTH + g_i_START_X * 2;
-CONST INT g_i_WINDOW_HEIGHT = g_i_START_X + g_i_SCREEN_HEIGHT + g_i_BUTTON_SIZE * 4 + g_i_INTERVAL * 5;
-*/
-
-CONST CHAR g_sz_WINDOW_CLASS[] = "Calc_WPD_311";//класс окна
-CONST CHAR* g_OPERATIONS[] = { "+","-", "*",  "/" }; //для того чтобы быстрее добавлять кнопки операций
-
-//'+';-символьная константа
-//"+";строковая константа
-//строка это массив, а массив это указатель поскольку имя массива содержит адрес нулевого элемента массива
+CONST CHAR* g_OPERATIONS[] = { "+", "-", "*", "/" };
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT GetTitleBarHeight(HWND hwnd);
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
 VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[]);
-
+VOID LoadFontFromDLL(HMODULE hFontModule, INT resourceID);
+VOID LoadFontsFromDLL(HMODULE hFontsModule);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-	//hInstance - экзмпляр исполняемого файла программы загруженной в память
-	//hPrevInst - не используется
-	//lpCmdLine - коммандная строка с которой запустилась программа
-	//nCmdShow - режим отображения окна (свернуто на панель задач, развернуто на весь экран, свернуто в окно)
-
-	//HINSTANCE - тип данных
-	//hInstance - имя переменной
-
 	float a = -34.01;
 	float b = 8.3;
-	//1) регистрация класса окна:
+	//cout << "Сумма " << a + b << endl;
+	//1) Регистрация класса окна:
 	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
 
@@ -105,14 +47,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		MessageBox(NULL, "Class registration failed", NULL, MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	//2) создание окна:
+
+	//2) Создание окна:
 	HWND hwnd = CreateWindowEx
 	(
 		NULL,
 		g_sz_WINDOW_CLASS,
 		g_sz_WINDOW_CLASS,
 		WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
-		
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		g_i_WINDOW_WIDTH + 16, g_i_WINDOW_HEIGHT + 42,
 		NULL,
@@ -122,34 +64,25 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
-	//3) запуск цикла сообщений:
+
+	//3) Запуск цикла сообщений:
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
 	return msg.wParam;
 }
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	//процедура окна это самая обычная функция, которая неявно вызывается при запуске окна. 
-	//процедура окна всегда принимает 4 параметра: 
-	//hwnd - окно; 
-	//uMsg	 - сообщение;
-	//wParam, lParam - параметры сообщения, зависят от сообщения. Максимум в функцию можно передать 4 параметра сообщения, 
-	//поскольку wParam и lParam делятся на LOWORD(младшее слово) и HIWORD(старшее слово)
-
-	static INT index = 0; // выбирает скин и цветовую схему из массивов: 
-	//g_SKIN[];
-	//g_WINDOW_BACKGROUND_COLOR[] ;
-	//g_DISPLAY_BACKGROUND_COLOR[};
-	//g_DISPLAY_FOREGROUND_COLOR[];
-	switch (uMsg)// это основной switch процедуры окна, он выбирает различные действия в зависимости от сообщения, когда пользователь нажимает на кнопки,
-		//обрабатывается сообщение WM_COMMAND  
+	static INT index = 0;
+	static HMODULE hFontsModule = NULL;
+	switch (uMsg)
 	{
-	case WM_CREATE:	//в этой секции создаются элементы окна
+	case WM_CREATE:
 	{
 		HWND hEdit = CreateWindowEx
 		(
@@ -162,20 +95,32 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		 AddFontResource("Fonts\\MOSCOW2024.otf");
-		 HFONT hFont = CreateFont
-		 (
-			 g_i_FONT_HEIGHT, g_i_FONT_WIDTH,
-			 0, 0,
-			 FW_MEDIUM, 0, 0, 0,//Bold, Italic, UnderLine, Strikeout
-			 ANSI_CHARSET,
-			 OUT_CHARACTER_PRECIS,
-			 CLIP_CHARACTER_PRECIS,
-			 ANTIALIASED_QUALITY,
-			 FF_DONTCARE,
-			 "MOSCOW2024"
-		 );
-		 SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+		//AddFontResource("Fonts\\MOSCOW2024.otf");
+		hFontsModule = LoadLibrary("Fonts.dll");
+		/*
+		HRSRC hFntRes = FindResource(hFontsModule, MAKEINTRESOURCE(2003), MAKEINTRESOURCE(RT_FONT));
+		HGLOBAL hFntMem = LoadResource(hFontsModule, hFntRes);
+		VOID* fntData = LockResource(hFntMem);
+		DWORD nFonts = 0;
+		DWORD len = SizeofResource(hFontsModule, hFntRes);
+		AddFontMemResourceEx(fntData, len, NULL, &nFonts);
+		*/
+		LoadFontsFromDLL(hFontsModule);
+		HFONT hFont = CreateFont
+		(
+			g_i_FONT_HEIGHT, g_i_FONT_WIDTH,
+			0, 0,
+			FW_MEDIUM, 0, 0, 0,	//Bold, Italic, Underline, Strikeout
+			ANSI_CHARSET,
+			OUT_CHARACTER_PRECIS,
+			CLIP_CHARACTER_PRECIS,
+			ANTIALIASED_QUALITY,
+			FF_DONTCARE,
+			g_FONT_NAMES[0]
+			//"MOSCOW2024"
+		);
+		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+
 		CHAR sz_digit[2] = {};
 		for (int i = 6; i >= 0; i -= 3)
 		{
@@ -185,7 +130,6 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CreateWindowEx
 				(
 					NULL, "Button", sz_digit,
-					//WS_CHILD | WS_VISIBLE,
 					WS_CHILD | WS_VISIBLE | BS_BITMAP,
 					g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL) * j,
 					g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (2 - i / 3),
@@ -195,37 +139,21 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					GetModuleHandle(NULL),
 					NULL
 				);
-
 			}
-
 		}
-		//добавить стиль BS_BITMAP:
+		//1) Добавить стиль BS_BITMAP:
 		HWND hButton_0 = CreateWindowEx
 		(
 			NULL, "Button", "0",
 			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(0), BUTTON_SHIFT_Y(3),
-			
 			g_i_BUTTON_DOUBLE_SIZE, g_i_BUTTON_SIZE,
 			hwnd,
 			(HMENU)IDC_BUTTON_0,
 			GetModuleHandle(NULL),
 			NULL
 		);
-		//2)загрузить картинку из файла:
-		/*
-		HBITMAP bmpButton_0 = (HBITMAP)LoadImage
-		(
-			NULL,
-			"ButtonsBMP\\button_0.bmp",
-			IMAGE_BITMAP,
-			g_i_BUTTON_DOUBLE_SIZE,
-			g_i_BUTTON_SIZE,
-			LR_LOADFROMFILE
-		);
-		//3)Установить картинку на кнопку:
-		SendMessage(hButton_0, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_0);
-		*/
+		//2) Загрузить катринку из файла:
 		//HBITMAP bmpButton_0 = (HBITMAP)LoadImage
 		//(
 		//	NULL, 
@@ -242,7 +170,6 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL, "Button", ".",
 			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(2), BUTTON_SHIFT_Y(3),
-			
 			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 			hwnd,
 			(HMENU)IDC_BUTTON_POINT,
@@ -256,7 +183,6 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				NULL, "Button", g_OPERATIONS[i],
 				WS_CHILD | WS_VISIBLE | BS_BITMAP,
 				BUTTON_SHIFT_X(3), BUTTON_SHIFT_Y(3 - i),
-				
 				g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 				hwnd,
 				(HMENU)(IDC_BUTTON_PLUS + i),
@@ -264,6 +190,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				NULL
 			);
 		}
+
 		CreateWindowEx
 		(
 			NULL, "Button", "<-",
@@ -275,7 +202,6 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-
 		CreateWindowEx
 		(
 			NULL, "Button", "C",
@@ -298,48 +224,48 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		//	INT title_bar_height = GetTitleBarHeight(hwnd);
+		//INT title_bar_height = GetTitleBarHeight(hwnd);
 		SetSkinFromDLL(hwnd, "square_blue.dll");
 	}
 	break;
-	case WM_CTLCOLOREDIT:	// эта секция обычно задает цвет фона и текста в текстовом поле, но у нас она также задает цвет главного окна
+	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcEdit = (HDC)wParam;
-	//	SetBkMode(hdcEdit, OPAQUE);
+		//SetBkMode(hdcEdit, OPAQUE);
 		SetBkColor(hdcEdit, g_DISPLAY_BACKGROUND_COLOR[index]);
 		SetTextColor(hdcEdit, g_DISPLAY_FOREGROUND_COLOR[index]);
 
 		HBRUSH hbrBackground = CreateSolidBrush(g_WINDOW_BACKGROUND_COLOR[index]);
-
-		SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackground );	//задаем цвет главного окна
+		SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackground);
 		SendMessage(hwnd, WM_ERASEBKGND, wParam, 0);
 		//InvalidateRect(hwnd, NULL, TRUE);
 		//UpdateWindow(hwnd);
 		//SetSkin(hwnd, g_SKIN[index]);
-		
-		RedrawWindow(hwnd, NULL, NULL, RDW_ERASE );//перерисовать окно
+		//TODO: Возможно эта функция позволит заменить вызов SetSkin();
+		RedrawWindow(hwnd, NULL, NULL, RDW_ERASE);
 		return (LRESULT)hbrBackground;
 	}
-		break;
-	case WM_COMMAND:// это сообщение приходит когда пользователь нажимает ЛКМ  на элементы окна
+	break;
+	case WM_COMMAND:
 	{
-		static DOUBLE  a = DBL_MIN;
-		static DOUBLE  b = DBL_MIN;
+		static DOUBLE a = DBL_MIN;
+		static DOUBLE b = DBL_MIN;
 		static WORD operation = 0;
-		static BOOL input = FALSE;
+		static BOOL	input = FALSE;
 		static BOOL operation_input = FALSE;
 		static BOOL equal_pressed = FALSE;
-		SetFocus(hwnd);//Для того чтобы всегда работала клавиатура
+
+		SetFocus(hwnd);	//Для того чтобы всегда работала клавиатура.
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_display[SIZE]{};
-		CHAR  sz_digit[2]{};
+		CHAR sz_digit[2]{};
 		if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)
 		{
 			if (operation_input || equal_pressed)
 			{
-				SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)""),
-					operation_input = equal_pressed = FALSE;
+				SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"");
+				operation_input = equal_pressed = FALSE;
 			}
 			sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + '0';
 			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
@@ -364,7 +290,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				sz_display[strlen(sz_display) - 1] = 0;
 			else
 				sz_display[0] = '0';
-			SendMessage(hEditDisplay, WM_GETTEXT, 0, (LPARAM)sz_display);
+			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_CLR)
 		{
@@ -373,7 +299,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			input = operation_input = FALSE;
 			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");
 		}
-		/////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////
 		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
 		{
 			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
@@ -392,10 +318,10 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			input = FALSE;
 			switch (operation)
 			{
-			case IDC_BUTTON_PLUS: a += b; break;
-			case IDC_BUTTON_MINUS: a -= b; break;
-			case IDC_BUTTON_ASTER: a *= b; break;
-			case IDC_BUTTON_SLASH: a /= b; break;
+			case IDC_BUTTON_PLUS:	a += b;	break;
+			case IDC_BUTTON_MINUS:	a -= b;	break;
+			case IDC_BUTTON_ASTER:	a *= b;	break;
+			case IDC_BUTTON_SLASH:	a /= b;	break;
 			}
 			operation_input = FALSE;
 			equal_pressed = TRUE;
@@ -404,8 +330,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	break;
-
-	case WM_KEYDOWN://это сообщение приходит когда пользователь нажимает клавишу
+	case WM_KEYDOWN:
 	{
 		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
 		{
@@ -414,63 +339,53 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else if (wParam >= '0' && wParam <= '9')
 		{
 			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
-
 		}
 		else if (wParam >= 0x60 && wParam <= 0x69)
 		{
 			SendMessage(GetDlgItem(hwnd, wParam - 0x60 + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
-			//SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0 * 60 + IDC_BUTTON_0), 0);
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
 		}
 		switch (wParam)
 		{
 		case VK_OEM_PLUS:
 		case VK_ADD:
-
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, TRUE, 0);
 			break;
 		case VK_OEM_MINUS:
 		case VK_SUBTRACT:
-
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, TRUE, 0);
 			break;
 		case VK_MULTIPLY:
-
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, TRUE, 0);
 			break;
 		case VK_OEM_2:
 		case VK_DIVIDE:
-
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, TRUE, 0);
 			break;
 
 		case VK_OEM_PERIOD:
 		case VK_DECIMAL:
-
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, TRUE, 0);
 			break;
-
 		case VK_BACK:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, TRUE, 0);
 			break;
-
 		case VK_ESCAPE:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLR), BM_SETSTATE, TRUE, 0);
 			break;
-
 		case VK_RETURN:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, TRUE, 0);
 			break;
+
 		}
 	}
 	break;
-
-	case WM_KEYUP:	//это сообщение приходит когда юзер отжимает клавишу
+	case WM_KEYUP:
 	{
 		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
 		{
 			SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0);
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
-
 		}
 		else if (wParam >= '0' && wParam <= '9')
 		{
@@ -485,22 +400,19 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_OEM_PLUS:
-		case	VK_ADD:
+		case VK_ADD:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0);
 			break;
-
 		case VK_OEM_MINUS:
-		case	VK_SUBTRACT:
+		case VK_SUBTRACT:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0);
 			break;
-
 		case VK_MULTIPLY:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0);
 			break;
-
 		case VK_OEM_2:
 		case VK_DIVIDE:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, FALSE, 0);
@@ -512,66 +424,77 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0);
 			break;
-
 		case VK_BACK:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0);
 			break;
-
 		case VK_ESCAPE:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLR), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0);
 			break;
-
 		case VK_RETURN:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, FALSE, 0);
 			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
 			break;
+
 		}
 	}
 	break;
-	case WM_CONTEXTMENU://это сообщение приходит когда юзер нажимает ПКМ на окно
+	case WM_CONTEXTMENU:
 	{
-		//1)создаем всплывающее меню
+		//1) Создаем всплывающее меню:
 		HMENU hMenu = CreatePopupMenu();
-		//2)добавляем пункты в созданное меню:
+		HMENU hMenuSkins = CreatePopupMenu();
+		HMENU hMenuFonts = CreatePopupMenu();
+		//2) Добавляем пункты в созданное меню:	
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_MOSCOW_2024, "Moscow 2024");
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_TERMINATOR, "Terminator Two");
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_DIGITAL_7, "Digital-7");
+	
+		InsertMenu(hMenuSkins, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_METAL_MISTRAL, "Metal mistral");
+		InsertMenu(hMenuSkins, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
+
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_METAL_MISTRAL, "Metal Mistral");
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING | MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
-		CheckMenuItem(hMenu, index, MF_BYPOSITION | MF_CHECKED);
-		//3)использование контекстного меню:
+
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hMenuFonts, "Fonts");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hMenuSkins, "Skins");
+
+	
+		CheckMenuItem(hMenuSkins, index, MF_BYPOSITION | MF_CHECKED);
+
+		//3) Использование контекстного меню:
 		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
 		switch (item)
 		{
-		case IDR_SQUARE_BLUE:// SetSkin(hwnd, "square_blue"); break;
-		case IDR_METAL_MISTRAL: //SetSkin(hwnd, "metal_mistral"); break;
+		case IDR_SQUARE_BLUE:	//SetSkin(hwnd, "square_blue");		break;
+		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral");		break;
 			index = item - IDR_SQUARE_BLUE;
-			//SendMessage(GetDlgItem(hwnd, item), )
-		//	ModifyMenu(hMenu, item - IDR_SQUARE_BLUE, MF_BYPOSITION | MF_STRING | MF_CHECKED, item, NULL);
+			//SendMessage(GetDlgItem(hwnd, item), MENUITEM)
+			//ModifyMenu(hMenu, item - IDR_SQUARE_BLUE, MF_BYPOSITION | MF_STRING | MF_CHECKED, item, NULL);
 			break;
-		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
+		case IDR_EXIT:			SendMessage(hwnd, WM_CLOSE, 0, 0);	break;
 		}
+
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		HDC hdcDisplay = GetDC(hEditDisplay);
 		SendMessage(hwnd, WM_CTLCOLOREDIT, (WPARAM)hdcDisplay, 0);
 		ReleaseDC(hEditDisplay, hdcDisplay);
 		SetSkinFromDLL(hwnd, g_SKIN[index]);
-		//SetFocus(hEditDisplay);
-		//SendMessage(hwnd, WM_CTLCOLOREDIT, )
+		SetFocus(hEditDisplay);
 
-		//4)удаляем меню:
+		//4) Удаляем меню:
 		DestroyMenu(hMenu);
-
 	}
 	break;
-	case WM_DESTROY:// это сообщение уничтожает окно
+	case WM_DESTROY:
+		FreeLibrary(hFontsModule);
 		PostQuitMessage(0);
 		break;
-	case WM_CLOSE:// это сообщение закрывает окно, здесь просто отправляется сообщение на уничтожение окна
+	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
-	default: return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	default:	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	return FALSE;
 }
@@ -585,8 +508,6 @@ INT GetTitleBarHeight(HWND hwnd)
 	INT title_bar_height = (window_rect.bottom - window_rect.top) - (client_rect.bottom - client_rect.top);
 	return title_bar_height;
 }
-
-
 CONST CHAR* g_BUTTONS[] =
 {
 	"button_0.bmp",
@@ -606,9 +527,8 @@ CONST CHAR* g_BUTTONS[] =
 	"button_slash.bmp",
 	"button_bsp.bmp",
 	"button_clr.bmp",
-	"button_equal.bmp"
+	"button_equal.bmp",
 };
-
 VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 {
 	CHAR sz_filename[MAX_PATH]{};
@@ -641,9 +561,28 @@ VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[])
 			IMAGE_BITMAP,
 			i == IDC_BUTTON_0 ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
 			i == IDC_BUTTON_EQUAL ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
-			LR_SHARED//с NULL тоже работает
+			LR_SHARED	//c NULL тоже работает :-)
 		);
 		SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton);
+		//IMAGE_BITMAP можно не указывать, а оставить NULL, потому что IMAGE_BITMAP это и есть NULL :-)
 	}
 	FreeLibrary(hModule);
+}
+
+VOID LoadFontFromDLL(HMODULE hFontModule, INT resourceID)
+{
+	HRSRC hFntRes = FindResource(hFontModule, MAKEINTRESOURCE(resourceID), MAKEINTRESOURCE(RT_FONT));
+	HGLOBAL hFntMem = LoadResource(hFontModule, hFntRes);
+	VOID* fntData = LockResource(hFntMem);
+	DWORD nFonts = 0;
+	DWORD len = SizeofResource(hFontModule, hFntRes);
+	AddFontMemResourceEx(fntData, len, NULL, &nFonts);
+}
+VOID LoadFontsFromDLL(HMODULE hFontsModule)
+{
+	for (int i = 2001; i <= 2003; i++)
+	{
+		LoadFontFromDLL(hFontsModule, i);
+    }
+
 }
