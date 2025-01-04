@@ -17,6 +17,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
 VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[]);
 VOID LoadFontFromDLL(HMODULE hFontModule, INT resourceID);
 VOID LoadFontsFromDLL(HMODULE hFontsModule);
+VOID SetFont(HWND hwnd, CONST CHAR font_name[]);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -79,6 +80,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static INT index = 0;
+	static INT font_index = 0;
 	static HMODULE hFontsModule = NULL;
 	switch (uMsg)
 	{
@@ -104,7 +106,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DWORD nFonts = 0;
 		DWORD len = SizeofResource(hFontsModule, hFntRes);
 		AddFontMemResourceEx(fntData, len, NULL, &nFonts);
-		*//////
+		
 		LoadFontsFromDLL(hFontsModule);
 		HFONT hFont = CreateFont
 		(
@@ -119,8 +121,9 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			g_FONT_NAMES[0]
 			//"MOSCOW2024"
 		);
-		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
-
+		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);*/
+		LoadFontsFromDLL(hFontsModule);
+		SetFont(hwnd, g_FONT_NAMES[index]);
 		CHAR sz_digit[2] = {};
 		for (int i = 6; i >= 0; i -= 3)
 		{
@@ -462,16 +465,23 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	
 		CheckMenuItem(hMenuSkins, index, MF_BYPOSITION | MF_CHECKED);
-
+		CheckMenuItem(hMenuFonts, font_index, MF_BYPOSITION | MF_CHECKED);
 		//3) Использование контекстного меню:
 		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
 		switch (item)
 		{
+			//Skins:
 		case IDR_SQUARE_BLUE:	//SetSkin(hwnd, "square_blue");		break;
 		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral");		break;
 			index = item - IDR_SQUARE_BLUE;
 			//SendMessage(GetDlgItem(hwnd, item), MENUITEM)
 			//ModifyMenu(hMenu, item - IDR_SQUARE_BLUE, MF_BYPOSITION | MF_STRING | MF_CHECKED, item, NULL);
+			break;
+			//Fonts:
+		case IDR_DIGITAL_7: 
+		case IDR_TERMINATOR:
+		case IDR_MOSCOW_2024:
+			font_index = item - IDR_FONTS - 1;
 			break;
 		case IDR_EXIT:			SendMessage(hwnd, WM_CLOSE, 0, 0);	break;
 		}
@@ -482,8 +492,11 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ReleaseDC(hEditDisplay, hdcDisplay);
 		SetSkinFromDLL(hwnd, g_SKIN[index]);
 		SetFocus(hEditDisplay);
+		SetFont(hwnd, g_FONT_NAMES[font_index]);
 
 		//4) Удаляем меню:
+		DestroyMenu(hMenuFonts);
+		DestroyMenu(hMenuSkins);
 		DestroyMenu(hMenu);
 	}
 	break;
@@ -585,4 +598,24 @@ VOID LoadFontsFromDLL(HMODULE hFontsModule)
 		LoadFontFromDLL(hFontsModule, i);
     }
 
+}
+
+VOID SetFont(HWND hwnd, const CHAR font_name[])
+{
+	HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+	HFONT hFont = CreateFont
+	(
+		g_i_FONT_HEIGHT, g_i_FONT_WIDTH,
+		0, 0,
+		FW_MEDIUM, 0, 0, 0,	//Bold, Italic, Underline, Strikeout
+		ANSI_CHARSET,
+		OUT_CHARACTER_PRECIS,
+		CLIP_CHARACTER_PRECIS,
+		ANTIALIASED_QUALITY,
+		FF_DONTCARE,
+		font_name
+		//"MOSCOW2024"
+	);
+	SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+	
 }
