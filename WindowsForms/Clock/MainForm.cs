@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;   //DllImport
-using System.IO;                        //Directory
+using System.Runtime.InteropServices;   
+using System.IO;                        
 
 namespace Clock
 {
