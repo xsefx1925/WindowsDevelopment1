@@ -8,13 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;   
-using System.IO;                        
+using System.IO;
+using Microsoft.Win32;
 
 namespace Clock
 {
 	public partial class MainForm : Form
 	{
 		FontDialog fontDialog;
+		AlarmsForm alarmsForm;
 		public MainForm()
 		{
 			InitializeComponent();
@@ -27,6 +29,7 @@ namespace Clock
 			//fontDialog = new FontDialog();
 			Console.WriteLine(Directory.GetCurrentDirectory());
 			LoadSettings();
+			alarmsForm = new AlarmsForm();
 			if (fontDialog == null) fontDialog = new FontDialog();
 		}
 		void SetVisibility(bool visible)
@@ -171,6 +174,20 @@ namespace Clock
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SaveSettings();
+		}
+
+		private void toolStripMenuItemLoadOnWindowsStartup_CheckedChanged(object sender, EventArgs e)
+		{
+			string key_name = "Clock_VPD_311";
+			RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+			if (toolStripMenuItemLoadOnWindowsStartup.Checked) key.SetValue(key_name, Application.ExecutablePath);
+			else key.DeleteValue(key_name, false);
+			key.Dispose();
+		}
+
+		private void ToolStripMenuItemAlarms_Click(object sender, EventArgs e)
+		{
+			alarmsForm.ShowDialog();
 		}
 
 		//private void toolStripMenuItemShowControls_CheckedChanged(object sender, EventArgs e)
