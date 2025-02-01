@@ -37,6 +37,8 @@ namespace Clock
 			this.labelFilename = new System.Windows.Forms.Label();
 			this.buttonOK = new System.Windows.Forms.Button();
 			this.buttonCansel = new System.Windows.Forms.Button();
+			this.richTextBoxMessage = new System.Windows.Forms.RichTextBox();
+			this.buttonChooseFile = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// checkBoxUseDate
@@ -89,11 +91,13 @@ namespace Clock
 			this.checkedListBoxWeekdays.Name = "checkedListBoxWeekdays";
 			this.checkedListBoxWeekdays.Size = new System.Drawing.Size(455, 119);
 			this.checkedListBoxWeekdays.TabIndex = 3;
+			this.checkedListBoxWeekdays.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxWeekdays_SelectedIndexChanged);
 			// 
 			// labelFilename
 			// 
 			this.labelFilename.AutoSize = true;
-			this.labelFilename.Location = new System.Drawing.Point(15, 318);
+			this.labelFilename.Location = new System.Drawing.Point(15, 417);
+			this.labelFilename.MaximumSize = new System.Drawing.Size(380, 0);
 			this.labelFilename.Name = "labelFilename";
 			this.labelFilename.Size = new System.Drawing.Size(69, 17);
 			this.labelFilename.TabIndex = 4;
@@ -102,10 +106,10 @@ namespace Clock
 			// buttonOK
 			// 
 			this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.buttonOK.Location = new System.Drawing.Point(325, 330);
+			this.buttonOK.Location = new System.Drawing.Point(322, 417);
 			this.buttonOK.Name = "buttonOK";
 			this.buttonOK.Size = new System.Drawing.Size(75, 23);
-			this.buttonOK.TabIndex = 5;
+			this.buttonOK.TabIndex = 6;
 			this.buttonOK.Text = "OK";
 			this.buttonOK.UseVisualStyleBackColor = true;
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -113,18 +117,39 @@ namespace Clock
 			// buttonCansel
 			// 
 			this.buttonCansel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonCansel.Location = new System.Drawing.Point(412, 330);
+			this.buttonCansel.Location = new System.Drawing.Point(412, 417);
 			this.buttonCansel.Name = "buttonCansel";
 			this.buttonCansel.Size = new System.Drawing.Size(75, 23);
 			this.buttonCansel.TabIndex = 6;
 			this.buttonCansel.Text = "Cansel";
 			this.buttonCansel.UseVisualStyleBackColor = true;
 			// 
+			// richTextBoxMessage
+			// 
+			this.richTextBoxMessage.Location = new System.Drawing.Point(18, 239);
+			this.richTextBoxMessage.Name = "richTextBoxMessage";
+			this.richTextBoxMessage.Size = new System.Drawing.Size(455, 81);
+			this.richTextBoxMessage.TabIndex = 7;
+			this.richTextBoxMessage.Text = "";
+			this.richTextBoxMessage.TextChanged += new System.EventHandler(this.richTextBoxMessage_TextChanged);
+			// 
+			// buttonChooseFile
+			// 
+			this.buttonChooseFile.Location = new System.Drawing.Point(232, 417);
+			this.buttonChooseFile.Name = "buttonChooseFile";
+			this.buttonChooseFile.Size = new System.Drawing.Size(75, 23);
+			this.buttonChooseFile.TabIndex = 8;
+			this.buttonChooseFile.Text = "Обзор";
+			this.buttonChooseFile.UseVisualStyleBackColor = true;
+			this.buttonChooseFile.Click += new System.EventHandler(this.buttonChooseFile_Click);
+			// 
 			// AddAlarmDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(499, 365);
+			this.ClientSize = new System.Drawing.Size(499, 452);
+			this.Controls.Add(this.buttonChooseFile);
+			this.Controls.Add(this.richTextBoxMessage);
 			this.Controls.Add(this.buttonCansel);
 			this.Controls.Add(this.buttonOK);
 			this.Controls.Add(this.labelFilename);
@@ -137,6 +162,7 @@ namespace Clock
 			this.Name = "AddAlarmDialog";
 			this.ShowInTaskbar = false;
 			this.Text = "AddAlarmDialog";
+			this.Load += new System.EventHandler(this.AddAlarmDialog_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -151,5 +177,7 @@ namespace Clock
 		private System.Windows.Forms.Label labelFilename;
 		private System.Windows.Forms.Button buttonOK;
 		private System.Windows.Forms.Button buttonCansel;
+		private System.Windows.Forms.RichTextBox richTextBoxMessage;
+		private System.Windows.Forms.Button buttonChooseFile;
 	}
 }

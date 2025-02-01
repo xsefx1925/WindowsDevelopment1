@@ -55,7 +55,9 @@
 			this.buttonHideControls = new System.Windows.Forms.Button();
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.colorDialog = new System.Windows.Forms.ColorDialog();
+			this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
 			this.contextMenuStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// labelTime
@@ -92,7 +94,7 @@
             this.toolStripSeparator4,
             this.toolStripMenuItemExit});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(248, 302);
+			this.contextMenuStrip.Size = new System.Drawing.Size(248, 274);
 			// 
 			// toolStripMenuItemTopmost
 			// 
@@ -220,7 +222,7 @@
 			// 
 			this.checkBoxShowDate.AutoSize = true;
 			this.checkBoxShowDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.checkBoxShowDate.Location = new System.Drawing.Point(29, 234);
+			this.checkBoxShowDate.Location = new System.Drawing.Point(13, 139);
 			this.checkBoxShowDate.Margin = new System.Windows.Forms.Padding(4);
 			this.checkBoxShowDate.Name = "checkBoxShowDate";
 			this.checkBoxShowDate.Size = new System.Drawing.Size(164, 35);
@@ -233,7 +235,7 @@
 			// 
 			this.checkBoxShowWeekday.AutoSize = true;
 			this.checkBoxShowWeekday.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.checkBoxShowWeekday.Location = new System.Drawing.Point(29, 278);
+			this.checkBoxShowWeekday.Location = new System.Drawing.Point(13, 182);
 			this.checkBoxShowWeekday.Margin = new System.Windows.Forms.Padding(4);
 			this.checkBoxShowWeekday.Name = "checkBoxShowWeekday";
 			this.checkBoxShowWeekday.Size = new System.Drawing.Size(219, 35);
@@ -245,7 +247,7 @@
 			// buttonHideControls
 			// 
 			this.buttonHideControls.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.buttonHideControls.Location = new System.Drawing.Point(29, 343);
+			this.buttonHideControls.Location = new System.Drawing.Point(13, 236);
 			this.buttonHideControls.Margin = new System.Windows.Forms.Padding(4);
 			this.buttonHideControls.Name = "buttonHideControls";
 			this.buttonHideControls.Size = new System.Drawing.Size(233, 65);
@@ -262,11 +264,22 @@
 			this.notifyIcon.Visible = true;
 			this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_DoubleClick);
 			// 
+			// axWindowsMediaPlayer1
+			// 
+			this.axWindowsMediaPlayer1.Enabled = true;
+			this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(12, 324);
+			this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+			this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+			this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(358, 55);
+			this.axWindowsMediaPlayer1.TabIndex = 4;
+			this.axWindowsMediaPlayer1.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(383, 425);
+			this.Controls.Add(this.axWindowsMediaPlayer1);
 			this.Controls.Add(this.buttonHideControls);
 			this.Controls.Add(this.checkBoxShowWeekday);
 			this.Controls.Add(this.checkBoxShowDate);
@@ -277,7 +290,9 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Clock VPD_311";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.contextMenuStrip.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -310,6 +325,7 @@
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemShowConsole;
 		private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAlarms;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+		private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
 	}
 }
 

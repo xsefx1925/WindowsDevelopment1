@@ -17,6 +17,7 @@ namespace Clock
 	{
 		FontDialog fontDialog;
 		AlarmsForm alarmsForm;
+		Alarm nextAlarm;
 		public MainForm()
 		{
 			InitializeComponent();
@@ -29,8 +30,9 @@ namespace Clock
 			//fontDialog = new FontDialog();
 			Console.WriteLine(Directory.GetCurrentDirectory());
 			LoadSettings();
-			alarmsForm = new AlarmsForm();
+			alarmsForm = new AlarmsForm(this);
 			if (fontDialog == null) fontDialog = new FontDialog();
+			axWindowsMediaPlayer1.Visible = false;
 		}
 		void SetVisibility(bool visible)
 		{
@@ -81,7 +83,11 @@ namespace Clock
 			sw.WriteLine($"{labelTime.ForeColor.ToArgb()}");
 			sw.Close();
 		}
-
+		Alarm FindNextAlarm()
+		{
+			nextAlarm = alarmsForm.Alarms.Items.Cast<Alarm>().ToArray().Min();
+			return nextAlarm;
+		}
 		private void timer_Tick(object sender, EventArgs e)
 		{
 			//Обработчик события - это самая обычная функция, которая неявно вызывается 
@@ -97,6 +103,25 @@ namespace Clock
 				$"{DateTime.Now.ToString("hh:mm tt")}\n" +
 				$"{DateTime.Now.ToString("yyyy.MM.dd")}\n" +
 				$"{DateTime.Now.DayOfWeek}";
+
+			nextAlarm = FindNextAlarm();
+			if (nextAlarm != null)Console.WriteLine(nextAlarm);
+				if(
+				nextAlarm != null&&
+				nextAlarm.Time.Hours == DateTime.Now.Hour&&
+				nextAlarm.Time.Minutes == DateTime.Now.Minute&&
+				nextAlarm.Time.Seconds == DateTime.Now.Second
+				)
+			{
+				System.Threading.Thread.Sleep(1000);
+				axWindowsMediaPlayer1.Visible = true;
+				axWindowsMediaPlayer1.URL = nextAlarm.Filename;
+				axWindowsMediaPlayer1.settings.volume = 100;
+				axWindowsMediaPlayer1.Ctlcontrols.play();			
+					if(nextAlarm.Message!="")
+	MessageBox.Show(this, nextAlarm.ToString(), "Alarm", MessageBoxButtons.OK, MessageBoxIcon.Information) ;
+			}
+			
 		}
 
 		private void buttonHideControls_Click(object sender, EventArgs e)
@@ -188,6 +213,11 @@ namespace Clock
 		private void ToolStripMenuItemAlarms_Click(object sender, EventArgs e)
 		{
 			alarmsForm.ShowDialog();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+
 		}
 
 		//private void toolStripMenuItemShowControls_CheckedChanged(object sender, EventArgs e)
