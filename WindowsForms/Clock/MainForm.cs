@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,7 +17,9 @@ namespace Clock
 {
 	public partial class MainForm : Form
 	{
-		FontDialog fontDialog;
+		
+
+FontDialog fontDialog;
 		AlarmsForm alarmsForm;
 		Alarm nextAlarm;
 		public MainForm()
@@ -34,6 +38,7 @@ namespace Clock
 			if (fontDialog == null) fontDialog = new FontDialog();
 			axWindowsMediaPlayer1.Visible = false;
 		}
+
 		void SetVisibility(bool visible)
 		{
 			checkBoxShowDate.Visible = visible;
@@ -219,10 +224,43 @@ namespace Clock
 		{
 
 		}
+		private bool isDragging = false; // Флаг для отслеживания состояния перетаскивания
+		private Point dragStartPoint;    // Точка начала перетаскивания
 
+		// Обработчик события нажатия кнопки мыши
+		private void MainForm_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				isDragging = true;
+				dragStartPoint = e.Location;
+			}
+		}
+
+		// Обработчик события перемещения мыши
+		private void MainForm_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (isDragging)
+			{
+				this.Location = new Point(this.Location.X + e.X - dragStartPoint.X, this.Location.Y + e.Y - dragStartPoint.Y);
+			}
+		}
+
+		// Обработчик события отпускания кнопки мыши
+		private void MainForm_MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				isDragging = false;
+			}
+		}
 		//private void toolStripMenuItemShowControls_CheckedChanged(object sender, EventArgs e)
 		//{
 		//	SetVisibility(toolStripMenuItemShowControls.Checked);
 		//}
+
+
+
 	}
 }
+

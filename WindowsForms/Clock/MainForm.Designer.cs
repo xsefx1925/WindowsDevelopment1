@@ -73,6 +73,11 @@
 			this.labelTime.Text = "Time";
 			this.labelTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.labelTime.DoubleClick += new System.EventHandler(this.labelTime_DoubleClick);
+
+			this.labelTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
+			this.labelTime.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
+			this.labelTime.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseUp);
+
 			// 
 			// contextMenuStrip
 			// 
@@ -258,11 +263,7 @@
 			// 
 			// notifyIcon
 			// 
-			this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
-			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-			this.notifyIcon.Text = "notifyIcon";
-			this.notifyIcon.Visible = true;
-			this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_DoubleClick);
+			
 			// 
 			// axWindowsMediaPlayer1
 			// 
@@ -296,6 +297,9 @@
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseUp);
 		}
 
 		#endregion
@@ -326,6 +330,8 @@
 		private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAlarms;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+		private object buttonStopAlarm;
 	}
+
 }
 
